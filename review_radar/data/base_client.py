@@ -14,6 +14,7 @@ class BaseClient(ABC):
     @abstractmethod
     def get_unlabeled_reviews(
         self,
+        batch_id: int,
         limit: int = 100,
         offset: int = 0
     ) -> DataFrame:
@@ -21,6 +22,7 @@ class BaseClient(ABC):
         Fetch reviews without labels
         
         Args:
+            batch_id: Batch ID to filter by
             limit: Number of reviews to fetch
             offset: Offset for pagination
         

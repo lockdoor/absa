@@ -106,54 +106,61 @@ class TestGetReviewsWithoutLabels:
     
     def test_returns_dataframe(self, supabase_client):
         """Returns pandas DataFrame"""
-        result = supabase_client.get_unlabeled_reviews()
+        result = supabase_client.get_unlabeled_reviews(batch_id=1)
         
         assert isinstance(result, pd.DataFrame)
     
     def test_queries_reviews_table(self, supabase_client):
         """Queries the reviews table"""
-        supabase_client.get_unlabeled_reviews()
+        supabase_client.get_unlabeled_reviews(batch_id=1)
         
         supabase_client.client.table.assert_called_with('reviews')
     
     def test_selects_all_columns(self, supabase_client):
         """Selects all columns with *"""
-        supabase_client.get_unlabeled_reviews()
+        supabase_client.get_unlabeled_reviews(batch_id=1)
         
         # Verify select('*') was called
         supabase_client.client.table().select.assert_called_with('*')
     
     def test_filters_null_labels(self, supabase_client):
         """Filters for null labels"""
-        supabase_client.get_unlabeled_reviews()
+        supabase_client.get_unlabeled_reviews(batch_id=1)
         
         # Verify is_('label', None) was called
         supabase_client.client.table().is_.assert_called_with('label', None)
     
+    def test_filters_by_batch_id(self, supabase_client):
+        """Filters by batch_id"""
+        supabase_client.get_unlabeled_reviews(batch_id=42)
+        
+        # Verify eq('batch_id', 42) was called
+        supabase_client.client.table().eq.assert_called_with('batch_id', 42)
+    
     def test_default_limit_and_offset(self, supabase_client):
         """Uses default limit=100 and offset=0"""
-        supabase_client.get_unlabeled_reviews()
+        supabase_client.get_unlabeled_reviews(batch_id=1)
         
         # Should call range(0, 99)
         supabase_client.client.table().range.assert_called_with(0, 99)
     
     def test_custom_limit(self, supabase_client):
         """Respects custom limit"""
-        supabase_client.get_unlabeled_reviews(limit=50, offset=0)
+        supabase_client.get_unlabeled_reviews(batch_id=1, limit=50, offset=0)
         
         # Should call range(0, 49)
         supabase_client.client.table().range.assert_called_with(0, 49)
     
     def test_custom_offset(self, supabase_client):
         """Respects custom offset"""
-        supabase_client.get_unlabeled_reviews(limit=100, offset=50)
+        supabase_client.get_unlabeled_reviews(batch_id=1, limit=100, offset=50)
         
         # Should call range(50, 149)
         supabase_client.client.table().range.assert_called_with(50, 149)
     
     def test_executes_query(self, supabase_client):
         """Executes the query"""
-        supabase_client.get_unlabeled_reviews()
+        supabase_client.get_unlabeled_reviews(batch_id=1)
         
         supabase_client.client.table().execute.assert_called_once()
     
@@ -165,7 +172,7 @@ class TestGetReviewsWithoutLabels:
         ]
         mock_create_client.return_value.table().execute.return_value.data = mock_data
         
-        result = supabase_client.get_unlabeled_reviews()
+        result = supabase_client.get_unlabeled_reviews(batch_id=1)
         
         assert len(result) == 1
         assert result.iloc[0]['review_id'] == 1
@@ -220,7 +227,7 @@ class TestUpdateReviews:
 ])
 def test_pagination_calculations(supabase_client, limit, offset, expected_start, expected_end):
     """Test various pagination scenarios"""
-    supabase_client.get_unlabeled_reviews(limit=limit, offset=offset)
+    supabase_client.get_unlabeled_reviews(batch_id=1, limit=limit, offset=offset)
     
     supabase_client.client.table().range.assert_called_with(expected_start, expected_end)
 
@@ -234,7 +241,7 @@ class TestErrorHandling:
         """Handles empty response gracefully"""
         mock_create_client.return_value.table().execute.return_value.data = []
         
-        result = supabase_client.get_unlabeled_reviews()
+        result = supabase_client.get_unlabeled_reviews(batch_id=1)
         
         assert isinstance(result, pd.DataFrame)
         assert len(result) == 0
@@ -244,7 +251,7 @@ class TestErrorHandling:
         supabase_client.client.table().execute.side_effect = Exception("API Error")
         
         with pytest.raises(Exception, match="API Error"):
-            supabase_client.get_unlabeled_reviews()
+            supabase_client.get_unlabeled_reviews(batch_id=1)
     
     def test_handles_api_error_on_update(self, supabase_client):
         """Handles API errors during update"""

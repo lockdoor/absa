@@ -46,12 +46,14 @@ class SupabaseClient(BaseClient):
 
     def get_unlabeled_reviews(
         self,
+        batch_id: int,
         limit: int = 100,
         offset: int = 0
     ) -> pd.DataFrame:
         """Fetch reviews without labels from Supabase
 
         Args:
+            batch_id (int): Batch ID to filter by
             limit (int): Number of records to fetch
             offset (int): Offset for pagination
 
@@ -62,6 +64,7 @@ class SupabaseClient(BaseClient):
             self.client
             .table('reviews')
             .select('*')
+            .eq('batch_id', batch_id)
             .is_('label', None)
             .range(offset, offset + limit - 1)
             .execute()
