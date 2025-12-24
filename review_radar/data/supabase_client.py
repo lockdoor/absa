@@ -1,26 +1,48 @@
 from .base_client import BaseClient
 import pandas as pd
-from dotenv import load_dotenv
+from typing import Optional, Any
 import os
+from dotenv import load_dotenv
 from supabase import create_client, Client
+from .client_factory import ClientFactory
 
 
 load_dotenv()
 
 
+def create_supabase_client_from_env() -> Client:
+    """
+    Create Supabase client from environment variables
+    
+    Returns:
+        Supabase Client instance
+    
+    Raises:
+        ValueError: If SUPABASE_URL or SUPABASE_KEY not set
+    """
+    supabase_url: str | None = os.getenv("SUPABASE_URL", None)
+    supabase_key: str | None = os.getenv("SUPABASE_KEY", None)
+    
+    if not supabase_url or not supabase_key:
+        raise ValueError("Supabase URL and Key must be set in environment variables.")
+    
+    return create_client(supabase_url, supabase_key)
+
+
+@ClientFactory.register('supabase')
 class SupabaseClient(BaseClient):
     """Client for Supabase database interactions"""
 
-    def __init__(self):
-        supabase_url: str | None = os.getenv("SUPABASE_URL", None)
-        supabase_key: str | None = os.getenv("SUPABASE_KEY", None)
+    def __init__(self, client: Client, logger: Optional[Any] = None):
+        """
+        Initialize SupabaseClient
         
-        if not supabase_url or not supabase_key:
-            raise ValueError("Supabase URL and Key must be set in environment variables.")
-        
-        client: Client = create_client(supabase_url, supabase_key)
-        super().__init__(client=client)
-        self.client: Client
+        Args:
+            client: Supabase client instance
+            logger: Optional logger instance
+        """
+        super().__init__(client=client, logger=logger)
+        self.client: Client = client
 
     def get_reviews_without_labels(
         self,

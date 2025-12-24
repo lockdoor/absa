@@ -9,7 +9,7 @@ from unittest.mock import Mock, patch, MagicMock
 import pandas as pd
 import os
 
-from review_radar.data.supabase_client import SupabaseClient
+from review_radar.data.supabase_client import SupabaseClient, create_supabase_client_from_env
 
 
 # ==================== Test Fixtures ====================
@@ -50,7 +50,9 @@ def mock_create_client():
 @pytest.fixture
 def supabase_client(mock_supabase_env, mock_create_client):
     """Create SupabaseClient instance with mocked dependencies"""
-    return SupabaseClient()
+    # Get the mocked client from create_client
+    client = mock_create_client.return_value
+    return SupabaseClient(client=client)
 
 
 # ==================== Initialization Tests ====================
@@ -61,28 +63,31 @@ class TestSupabaseClientInit:
     def test_requires_environment_variables(self):
         """Cannot initialize without environment variables"""
         with patch.dict(os.environ, {}, clear=True):
-            with pytest.raises(ValueError, match="Supabase URL and Key must be set"):
-                SupabaseClient()
+            with patch('review_radar.data.supabase_client.create_client') as mock:
+                with pytest.raises(ValueError, match="Supabase URL and Key must be set"):
+                    create_supabase_client_from_env()
     
     def test_requires_url(self, monkeypatch):
         """Cannot initialize without SUPABASE_URL"""
         monkeypatch.delenv("SUPABASE_URL", raising=False)
         monkeypatch.setenv("SUPABASE_KEY", "test-key")
         
-        with pytest.raises(ValueError):
-            SupabaseClient()
+        with patch('review_radar.data.supabase_client.create_client') as mock:
+            with pytest.raises(ValueError):
+                create_supabase_client_from_env()
     
     def test_requires_key(self, monkeypatch):
         """Cannot initialize without SUPABASE_KEY"""
         monkeypatch.setenv("SUPABASE_URL", "https://test.supabase.co")
         monkeypatch.delenv("SUPABASE_KEY", raising=False)
         
-        with pytest.raises(ValueError):
-            SupabaseClient()
+        with patch('review_radar.data.supabase_client.create_client') as mock:
+            with pytest.raises(ValueError):
+                create_supabase_client_from_env()
     
     def test_creates_client_with_correct_credentials(self, mock_supabase_env, mock_create_client):
         """Creates Supabase client with correct credentials"""
-        client = SupabaseClient()
+        client = create_supabase_client_from_env()
         
         mock_create_client.assert_called_once_with(
             "https://test.supabase.co",
