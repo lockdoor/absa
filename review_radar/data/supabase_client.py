@@ -44,7 +44,7 @@ class SupabaseClient(BaseClient):
         super().__init__(client=client, logger=logger)
         self.client: Client = client
 
-    def get_reviews_without_labels(
+    def get_unlabeled_reviews(
         self,
         limit: int = 100,
         offset: int = 0

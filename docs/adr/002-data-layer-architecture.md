@@ -87,7 +87,7 @@ class BaseClient(ABC):
         self.logger = logger
     
     @abstractmethod
-    def get_reviews_without_labels(
+    def get_unlabeled_reviews(
         self,
         limit: int = 100,
         offset: int = 0
@@ -172,7 +172,7 @@ class SupabaseClient(BaseClient):
 
 แต่ละ operation มี method เฉพาะ:
 ```python
-client.get_reviews_without_labels(limit=100)
+client.get_unlabeled_reviews(limit=100)
 client.get_reviews_by_batch(batch_id=123)
 client.update_reviews(review_id=1, data={...})
 client.bulk_update_reviews(updates=[...])
@@ -236,7 +236,7 @@ base type
 ```
 def fetch_unlabeled(client: BaseClient, limit: int):
     """Business logic uses BaseClient interface"""
-    df = client.get_reviews_without_labels(limit=limit)
+    df = client.get_unlabeled_reviews(limit=limit)
     return df
 ```
 # Update records
@@ -357,7 +357,7 @@ class ReviewRepository:
     
     def get_unlabeled_reviews(self, limit: int = 100):
         """Domain-specific method using client"""
-        return self.client.get_reviews_without_labels(limit=limit)
+        return self.client.get_unlabeled_reviews(limit=limit)
     
     def get_batch_aspects(self, batch_id: int) -> List[str]:
         """Complex query handled by repository"""

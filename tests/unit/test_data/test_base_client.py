@@ -16,7 +16,7 @@ from review_radar.data.base_client import BaseClient
 class ConcreteClient(BaseClient):
     """Concrete implementation of BaseClient for testing"""
     
-    def get_reviews_without_labels(self, limit: int = 100, offset: int = 0):
+    def get_unlabeled_reviews(self, limit: int = 100, offset: int = 0):
         """Test implementation"""
         # Simulate fetching from client
         if hasattr(self.client, 'table'):
@@ -82,22 +82,22 @@ class TestBaseClient:
         assert client_with_logger.logger == mock_logger
 
 class TestGetReviewsWithoutLabels:
-    """Test get_reviews_without_labels method"""
+    """Test get_unlabeled_reviews method"""
     
     def test_returns_dataframe(self, concrete_client):
         """Method returns DataFrame"""
-        result = concrete_client.get_reviews_without_labels()
+        result = concrete_client.get_unlabeled_reviews()
         assert isinstance(result, pd.DataFrame)
     
     def test_default_parameters(self, concrete_client, mock_supabase_client):
         """Uses default limit and offset"""
-        concrete_client.get_reviews_without_labels()
+        concrete_client.get_unlabeled_reviews()
         
         mock_supabase_client.table.assert_called_once_with('reviews')
     
     def test_custom_limit(self, concrete_client, mock_supabase_client):
         """Respects custom limit parameter"""
-        concrete_client.get_reviews_without_labels(limit=50)
+        concrete_client.get_unlabeled_reviews(limit=50)
         
         # Verify range was called with correct params
         call_args = mock_supabase_client.table().range.call_args
@@ -106,7 +106,7 @@ class TestGetReviewsWithoutLabels:
     
     def test_custom_offset(self, concrete_client, mock_supabase_client):
         """Respects custom offset parameter"""
-        concrete_client.get_reviews_without_labels(limit=100, offset=50)
+        concrete_client.get_unlabeled_reviews(limit=100, offset=50)
         
         call_args = mock_supabase_client.table().range.call_args
         assert call_args[0][0] == 50  # offset
@@ -114,7 +114,7 @@ class TestGetReviewsWithoutLabels:
     
     def test_filters_null_labels(self, concrete_client, mock_supabase_client):
         """Filters for null labels"""
-        concrete_client.get_reviews_without_labels()
+        concrete_client.get_unlabeled_reviews()
         
         # Verify is_ method was called to filter null labels
         mock_supabase_client.table().is_.assert_called_once()
@@ -152,7 +152,7 @@ class TestBaseClientWithDifferentClients:
     def test_works_with_supabase_client(self, mock_supabase_client):
         """Works with Supabase-style client"""
         data = ConcreteClient(client=mock_supabase_client)
-        result = data.get_reviews_without_labels()
+        result = data.get_unlabeled_reviews()
         
         assert isinstance(result, pd.DataFrame)
         mock_supabase_client.table.assert_called()
@@ -176,7 +176,7 @@ class TestBaseClientWithDifferentClients:
 def test_pagination_ranges(mock_supabase_client, limit, offset, expected_start, expected_end):
     """Test various pagination ranges"""
     data = ConcreteClient(client=mock_supabase_client)
-    data.get_reviews_without_labels(limit=limit, offset=offset)
+    data.get_unlabeled_reviews(limit=limit, offset=offset)
     
     call_args = mock_supabase_client.table().range.call_args
     assert call_args[0][0] == expected_start

@@ -15,7 +15,7 @@ from review_radar.data.base_client import BaseClient
 class MockSupabaseClient(BaseClient):
     """Mock Supabase client for testing"""
     
-    def get_reviews_without_labels(self, limit=100, offset=0):
+    def get_unlabeled_reviews(self, limit=100, offset=0):
         return Mock()
     
     def update_reviews(self, review_id, update_data):
@@ -25,7 +25,7 @@ class MockSupabaseClient(BaseClient):
 class MockPostgresClient(BaseClient):
     """Mock Postgres client for testing"""
     
-    def get_reviews_without_labels(self, limit=100, offset=0):
+    def get_unlabeled_reviews(self, limit=100, offset=0):
         return Mock()
     
     def update_reviews(self, review_id, update_data):
@@ -82,7 +82,7 @@ class TestClientFactoryRegistration:
         
         @ClientFactory.register('test_type')
         class TestClient(BaseClient):
-            def get_reviews_without_labels(self, limit=100, offset=0):
+            def get_unlabeled_reviews(self, limit=100, offset=0):
                 return Mock()
             def update_reviews(self, review_id, update_data):
                 pass
@@ -95,14 +95,14 @@ class TestClientFactoryRegistration:
         
         @ClientFactory.register('type1')
         class Client1(BaseClient):
-            def get_reviews_without_labels(self, limit=100, offset=0):
+            def get_unlabeled_reviews(self, limit=100, offset=0):
                 return Mock()
             def update_reviews(self, review_id, update_data):
                 pass
         
         @ClientFactory.register('type2')
         class Client2(BaseClient):
-            def get_reviews_without_labels(self, limit=100, offset=0):
+            def get_unlabeled_reviews(self, limit=100, offset=0):
                 return Mock()
             def update_reviews(self, review_id, update_data):
                 pass

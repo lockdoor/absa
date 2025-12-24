@@ -12,7 +12,7 @@ class BaseClient(ABC):
         self.logger = logger
 
     @abstractmethod
-    def get_reviews_without_labels(
+    def get_unlabeled_reviews(
         self,
         limit: int = 100,
         offset: int = 0
