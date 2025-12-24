@@ -1,0 +1,25 @@
+venv
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+
+# Testing
+.coverage
+.pytest_cache/
+htmlcov/
+.tox/
+*.cover
+.hypothesis/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
