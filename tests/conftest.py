@@ -23,20 +23,28 @@ def mock_supabase_client():
     """Mock Supabase client with table() method chain"""
     client = Mock()
     
-    # Mock the response object with data attribute
-    mock_response = Mock()
-    mock_response.data = []
+    # Mock table chain
+    table_mock = Mock()
+    client.table.return_value = table_mock
     
-    # Mock table().select().is_().range().execute() chain
-    mock_query = Mock()
-    mock_query.select.return_value = mock_query
-    mock_query.is_.return_value = mock_query
-    mock_query.eq.return_value = mock_query
-    mock_query.update.return_value = mock_query
-    mock_query.range.return_value = mock_query
-    mock_query.execute.return_value = mock_response
+    # Mock query chain
+    query_mock = Mock()
+    table_mock.select.return_value = query_mock
+    query_mock.eq.return_value = query_mock
+    query_mock.is_.return_value = query_mock
+    query_mock.in_.return_value = query_mock
+    query_mock.range.return_value = query_mock
     
-    client.table.return_value = mock_query
+    # Mock update chain
+    update_mock = Mock()
+    table_mock.update.return_value = update_mock
+    update_mock.eq.return_value = update_mock
+    
+    # Mock execute response
+    execute_response = Mock()
+    execute_response.data = []
+    query_mock.execute.return_value = execute_response
+    update_mock.execute.return_value = execute_response
     
     return client
 

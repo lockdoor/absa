@@ -7,7 +7,7 @@ __author__ = "Review Radar Team"
 
 # Import main components
 # from .config import ModelConfig, TrainingConfig, DataConfig
-from .data import BaseClient
+from .data import BaseData, ReviewData
 # from .models import BaseModel, ABSAModel, AspectExtractor, SentimentClassifier
 # from .training import Trainer, Callback, EarlyStopping, ModelCheckpoint
 # from .evaluation import Evaluator, compute_metrics, print_evaluation_report
@@ -20,8 +20,8 @@ __all__ = [
     # 'TrainingConfig',
     # 'DataConfig',
     # Data
-    'BaseClient',
-    # 'ReviewDataset',
+    'BaseData',
+    'ReviewData',
     # 'TextPreprocessor',
     # 'DataLoader',
     # Models
