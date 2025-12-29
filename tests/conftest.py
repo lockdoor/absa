@@ -30,6 +30,7 @@ def mock_supabase_client():
     # Mock query chain
     query_mock = Mock()
     table_mock.select.return_value = query_mock
+    query_mock.from_.return_value = query_mock
     query_mock.eq.return_value = query_mock
     query_mock.is_.return_value = query_mock
     query_mock.in_.return_value = query_mock

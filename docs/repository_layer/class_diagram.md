@@ -1,7 +1,6 @@
 ```mermaid
 classDiagram
 
-    direction TD
     namespace Utility {
         class ABC {
             <<abstract>>
@@ -76,5 +75,4 @@ classDiagram
     ReviewRepository ..> ReviewData : uses
     BaseRepository <|-- BatchRepository
     BatchRepository ..> BatchData : uses
-
 ```

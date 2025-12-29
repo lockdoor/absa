@@ -6,8 +6,9 @@ Concrete implementation ของ ReviewData สำหรับ Supabase databas
 
 from typing import Optional, Any, List, Dict
 from logging import Logger
-from .review_data import ReviewData
 from supabase import Client
+
+from .review_data import ReviewData
 
 
 class ReviewDataSupabaseClient(ReviewData):
@@ -26,6 +27,7 @@ class ReviewDataSupabaseClient(ReviewData):
             logger: Optional logger instance
         """
         super().__init__(client=client, logger=logger)
+        self.client: Client
     
     def get_unlabeled_reviews(
         self,
@@ -55,21 +57,27 @@ class ReviewDataSupabaseClient(ReviewData):
         try:
             response = (
                 self.client
-                .table('reviews')
-                .select('*')
+                .from_('reviews')
+                .select('id, batch_id, review, labels!review_id(*), batch!batch_id(aspects)')
                 .eq('batch_id', batch_id)
-                .is_('labels', 'null')
+                .is_('labels', None)
                 .range(offset, offset + limit - 1)
                 .execute()
             )
             
-            data = response.data if response.data else []
+            data: List[Dict[str, Any]] = response.data if response.data else []
             
             self._log(
                 f"Found {len(data)} unlabeled reviews",
                 level="info",
                 count=len(data)
             )
+
+            if not response.data:
+                self._log(
+                    response,
+                    level="info"
+                )
             
             return data
             
