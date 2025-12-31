@@ -60,18 +60,20 @@ class TestDataFactoryValidation:
     def test_valid_data_types(self, mock_supabase_env):
         """Should accept valid data_types"""
         with patch('supabase.create_client'):
-            # review is implemented
-            instance = DataFactory.create(data_type='review')
-            assert instance is not None
+            # Test review (should work)
+            review = DataFactory.create(data_type='review')
+            assert review is not None
+            assert isinstance(review, ReviewData)
             
+            # Reset before testing next type
             DataFactory.reset()
             
-            # batch and aspect not yet implemented
-            with pytest.raises(NotImplementedError):
-                DataFactory.create(data_type='batch')
+            # Test batch (may not be implemented yet)
             
-            with pytest.raises(NotImplementedError):
-                DataFactory.create(data_type='aspect')
+            batch = DataFactory.create(data_type='batch')
+            assert batch is not None
+            DataFactory.reset()
+
     
     def test_valid_client_types(self, mock_supabase_env):
         """Should accept valid client_types"""
@@ -329,18 +331,6 @@ class TestDataFactoryIntegration:
 
 class TestDataFactoryNotImplemented:
     """Test not-yet-implemented features"""
-    
-    def test_batch_data_not_implemented(self, mock_supabase_env):
-        """Should raise NotImplementedError for batch data"""
-        with patch('supabase.create_client'):
-            with pytest.raises(NotImplementedError, match="BatchDataSupabaseClient"):
-                DataFactory.create(data_type='batch', client_type='supabase')
-    
-    def test_aspect_data_not_implemented(self, mock_supabase_env):
-        """Should raise NotImplementedError for aspect data"""
-        with patch('supabase.create_client'):
-            with pytest.raises(NotImplementedError, match="AspectDataSupabaseClient"):
-                DataFactory.create(data_type='aspect', client_type='supabase')
     
     def test_postgres_not_implemented(self):
         """Should raise NotImplementedError for postgres"""

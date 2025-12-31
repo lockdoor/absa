@@ -10,10 +10,9 @@ from typing import Optional, Dict, Tuple, Literal
 from logging import Logger
 
 from .base_data import BaseData
-from .review_data import ReviewData
 
 
-DataType = Literal['review', 'batch', 'aspect']
+DataType = Literal['review', 'batch', 'label']
 ClientType = Literal['supabase', 'postgres']
 
 
@@ -50,7 +49,7 @@ class DataFactory:
         สร้างหรือ return existing instance ของ data client
         
         Args:
-            data_type: ประเภทของ data ('review', 'batch', 'aspect')
+            data_type: ประเภทของ data ('review', 'batch')
             client_type: ประเภทของ database client ('supabase', 'postgres')
             logger: Optional logger instance
         
@@ -65,10 +64,10 @@ class DataFactory:
             review_client = DataFactory.create('review', 'supabase', my_logger)
         """
         # Validate inputs
-        if data_type not in ('review', 'batch', 'aspect'):
+        if data_type not in ('review', 'batch', 'label'):
             raise ValueError(
                 f"Invalid data_type: {data_type}. "
-                f"Must be 'review', 'batch', or 'aspect'"
+                f"Must be 'review', 'batch', or 'label'"
             )
         
         if client_type not in ('supabase', 'postgres'):
@@ -100,7 +99,7 @@ class DataFactory:
         สร้าง instance ใหม่ตาม data_type และ client_type
         
         Args:
-            data_type: 'review', 'batch', or 'aspect'
+            data_type: 'review' or 'batch'
             client_type: 'supabase' or 'postgres'
             logger: Optional logger
         
@@ -124,7 +123,7 @@ class DataFactory:
         สร้าง Supabase instance
         
         Args:
-            data_type: 'review', 'batch', or 'aspect'
+            data_type: 'review', 'batch', or 'label'
             logger: Optional logger
         
         Returns:
@@ -145,25 +144,19 @@ class DataFactory:
         
         # Create supabase client
         supabase_client = create_client(supabase_url, supabase_key)
-        
+
         # Create appropriate data instance
         if data_type == 'review':
             from .review_data_supabase_client import ReviewDataSupabaseClient
             return ReviewDataSupabaseClient(client=supabase_client, logger=logger)
         
         elif data_type == 'batch':
-            # TODO: Implement BatchDataSupabaseClient
-            raise NotImplementedError(
-                "BatchDataSupabaseClient not yet implemented. "
-                "Coming soon!"
-            )
+            from .batch_data_supabase import BatchDataSupabaseClient
+            return BatchDataSupabaseClient(client=supabase_client, logger=logger)
         
-        elif data_type == 'aspect':
-            # TODO: Implement AspectDataSupabaseClient
-            raise NotImplementedError(
-                "AspectDataSupabaseClient not yet implemented. "
-                "Coming soon!"
-            )
+        elif data_type == 'label':
+            from .label_data_supabase import LabelDataSupabaseClient
+            return LabelDataSupabaseClient(client=supabase_client, logger=logger)
         
         else:
             raise ValueError(f"Unknown data_type: {data_type}")
