@@ -28,3 +28,5 @@ Thumbs.db
 *.csv
 *.xlsx
 *.ipynb
+
+*.log
