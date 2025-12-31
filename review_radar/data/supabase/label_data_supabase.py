@@ -2,7 +2,7 @@ from typing import List, Dict, Any
 from logging import Logger
 from supabase import Client
 
-from .label_data import LabelData
+from ..label_data import LabelData
 
 
 class LabelDataSupabaseClient(LabelData):

@@ -8,7 +8,7 @@ from typing import Optional, Any, List, Dict
 from logging import Logger
 from supabase import Client
 
-from .review_data import ReviewData
+from ..review_data import ReviewData
 
 
 class ReviewDataSupabaseClient(ReviewData):
@@ -57,8 +57,8 @@ class ReviewDataSupabaseClient(ReviewData):
         try:
             response = (
                 self.client
-                .from_('reviews')
-                .select('id, batch_id, review, labels!review_id(*), batch!batch_id(aspects)')
+                .table('reviews')
+                .select('id, batch_id, review, labels!review_id(*)')
                 .eq('batch_id', batch_id)
                 .is_('labels', None)
                 .range(offset, offset + limit - 1)

@@ -11,7 +11,7 @@ import os
 from review_radar.data.data_factory import DataFactory
 from review_radar.data.base_data import BaseData
 from review_radar.data.review_data import ReviewData
-from review_radar.data.review_data_supabase_client import ReviewDataSupabaseClient
+from review_radar.data.supabase.review_data_supabase_client import ReviewDataSupabaseClient
 
 
 # ==================== Fixtures ====================

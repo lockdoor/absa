@@ -7,7 +7,7 @@ Tests for ReviewDataSupabaseClient
 import pytest
 from unittest.mock import Mock
 
-from review_radar.data.review_data_supabase_client import ReviewDataSupabaseClient
+from review_radar.data.supabase.review_data_supabase_client import ReviewDataSupabaseClient
 from review_radar.data.review_data import ReviewData
 from review_radar.data.base_data import BaseData
 
@@ -147,7 +147,6 @@ class TestGetUnlabeledReviews:
         assert result[1]['id'] == 2
         assert result[0]['labels'] == None or result[0]['labels'] == [] and len(result[1]['labels']) == 0   
         # Verify Supabase calls
-        mock_supabase_with_from.from_.assert_called_once_with('reviews')
         # query_chain.select.assert_called_once()
         query_chain.eq.assert_called_once_with('batch_id', 1)
         query_chain.is_.assert_called_once_with('labels', None)

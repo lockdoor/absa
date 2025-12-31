@@ -2,7 +2,7 @@
 
 from .base_data import BaseData
 from .review_data import ReviewData
-from .review_data_supabase_client import ReviewDataSupabaseClient
+from .supabase.review_data_supabase_client import ReviewDataSupabaseClient
 from .data_factory import DataFactory
 
 __all__ = [

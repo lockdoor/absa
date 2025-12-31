@@ -14,7 +14,6 @@ htmlcov/
 .hypothesis/
 
 # IDE
-.vscode/
 .idea/
 *.swp
 *.swo
@@ -27,6 +26,4 @@ Thumbs.db
 
 *.csv
 *.xlsx
-*.ipynb
-
 *.log

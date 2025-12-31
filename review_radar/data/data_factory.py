@@ -147,15 +147,15 @@ class DataFactory:
 
         # Create appropriate data instance
         if data_type == 'review':
-            from .review_data_supabase_client import ReviewDataSupabaseClient
+            from .supabase.review_data_supabase_client import ReviewDataSupabaseClient
             return ReviewDataSupabaseClient(client=supabase_client, logger=logger)
         
         elif data_type == 'batch':
-            from .batch_data_supabase import BatchDataSupabaseClient
+            from .supabase.batch_data_supabase import BatchDataSupabaseClient
             return BatchDataSupabaseClient(client=supabase_client, logger=logger)
         
         elif data_type == 'label':
-            from .label_data_supabase import LabelDataSupabaseClient
+            from .supabase.label_data_supabase import LabelDataSupabaseClient
             return LabelDataSupabaseClient(client=supabase_client, logger=logger)
         
         else:

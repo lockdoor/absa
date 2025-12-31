@@ -2,7 +2,7 @@ from typing import List, Dict, Any
 from logging import Logger
 from supabase import Client
 
-from .batch_data import BatchData
+from ..batch_data import BatchData
 
 
 class BatchDataSupabaseClient(BatchData):
